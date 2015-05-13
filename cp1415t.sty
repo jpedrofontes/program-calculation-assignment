@@ -1,0 +1,155 @@
+%================= lhs2tex=====================================================%
+%include polycode.fmt 
+%format (div (x)(y)) = x "\div " y
+%format fst = "\p1"
+%format p1  = "\p1"
+%format snd = "\p2"
+%format p2  = "\p2"
+%format Left = "i_1"
+%format Right = "i_2"
+%format i1 = "i_1"
+%format i2 = "i_2"
+%format >< = "\times"
+%format >|<  = "\bowtie "
+%format |-> = "\mapsto"
+%format . = "\comp "
+%format (kcomp (f)(g)) = f "\kcomp " g
+%format -|- = "+"
+%format conc = "\mathsf{conc}"
+%format (either (a) (b)) = "\alt{" a "}{" b "}"
+%format (frac (a) (b)) = "\frac{" a "}{" b "}"
+%format (uncurry f) = "\uncurry{" f "}"
+%format (uncurry f) = "\uncurry{" f "}"
+%format (const f) = "\underline{" f "}"
+%format cata = "\hcata"
+%format TLTree = "\mathsf{TLTree}"
+% -- desactivados:
+%%format (uncurry (f)) = "\uncurry{" f "}"
+%%format Either a b = a "+" b
+%format cond p f g = "\mcond{" p "}{" f "}{" g "}"
+%================= Standard packages ==========================================%
+\usepackage[portuguese]{babel}
+\usepackage[utf8]{inputenc}
+%----------------- Date -------------------------------------------------------%
+\def\mydate{
+\ifcase\month\or
+ Janeiro\or Fevereiro\or Março\or Abril\or Maio\or Junho\or Julho\or Agosto\or Setembro\or Outubro\or Novembro\or Dezembro\fi \ de \number\year
+}
+%----------------- verbatim ---------------------------------------------------%
+\usepackage{fancyvrb}
+%----------------- Using xy ---------------------------------------------------%
+\usepackage[all]{xy}
+\def\larrow#1#2#3{\xymatrix{ #3 & #1 \ar[l]_-{#2} }}
+\def\rarrow#1#2#3{\xymatrix{ #1 \ar[r]^-{#2} & #3 }}
+\def\u{u}                  % unidade de um mónade
+\def\fun#1{{\sf #1}\index{Functor}}
+%----------------- Using makeidx ----------------------------------------------%
+\usepackage{makeidx}
+\def\Bibtex{\href{http://www.bibtex.org/}{Bib\TeX}\index{Utilitário!LaTeX!\texttt{bibtex}}}
+\def\Makeindex{\href{http://www.tex.ac.uk/ctan/indexing/makeindex/doc/makeindex.pdf}{\texttt{makeindex}}\index{Utilitário!LaTeX!\texttt{makeindex}}}
+\def\GHCi{\ghci{GHCi}}
+\def\ghci#1{\href{https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/ghci.html}{#1}\index{Haskell!interpretador!GHCi}}
+\def\IO{IO\index{Mónade!\texttt{IO}}}
+\def\Latex{\LaTeX\index{\LaTeX}}
+\def\LhsToTeX{\lhstotex{lhs2tex}}
+\def\N{I\!\!N\index{Números naturais ($I\!\!N$)}}
+\def\R{I\!\!R\index{Números reais ($I\!\!R$)}}
+\def\Probability{\href{http://wiki.di.uminho.pt/twiki/bin/view/Education/CP/MaterialPedagogico}{Probability}\index{Haskell!Biblioteca!Probability}}
+\def\TUG{TUG\index{TeX!TeX Users Group (TUG)}}
+\def\alt#1#2{\mathopen{[}#1 , #2\mathclose{]}\index{Combinador ``pointfree''!\emph{either}}}	% "either" is reserved....
+\def\ap#1#2{#1\,#2}
+\def\bang{{!}\index{Função!\emph{bang}}}
+\def\cata#1{\mathopen{(\!|}#1\mathclose{|\!)}\index{Combinador ``pointfree''!\emph{cata}}}
+\def\dium{\htmladdnormallink{Departamento de Informática}{http://www.di.uminho.pt/}\index{U.Minho!Departamento de Informática}}
+\def\file#1{\texttt{#1}\index{Ficheiro!\texttt{#1}}}
+\def\haskell#1{\href{http://www.haskell.org}{#1}\index{Haskell}}
+\def\litp#1{\href{http://www.literateprogramming.com}{#1}\index{Programação literária}}
+\def\lhstotex#1{\href{https://hackage.haskell.org/package/lhs2tex}{#1}\index{Haskell!``Literate Haskell''!lhs2TeX}}
+\def\LTree{\href{http://wiki.di.uminho.pt/twiki/pub/Education/CP1314/MaterialPedagogico/LTree.hs}{LTree}\index{Cálculo de Programas!Material Pedagógico!LTree.hs}}
+\def\List{\href{http://wiki.di.uminho.pt/twiki/pub/Education/CP1314/MaterialPedagogico/List.hs}{List}\index{Cálculo de Programas!Material Pedagógico!List.hs}}
+\def\ControlParallelStrategies{\href{https://hackage.haskell.org/package/parallel-3.1.0.1/docs/Control-Parallel-Strategies.html}{Control.Parallel.Strategies}\index{Haskell!Control!Parallel.Strategies}}
+\def\PFP{\href{http://web.engr.oregonstate.edu/~erwig/pfp}{PHP}\index{Haskell!Biblioteca!PFP}}
+\def\XFreedom{\href{http://www.x3dom.org}{X3DOM}\index{Utilitário!X3DOM}}
+\def\BTree{\href{http://wiki.di.uminho.pt/twiki/pub/Education/CP1314/MaterialPedagogico/BTree.hs}{BTree}\index{Cálculo de Programas!Material Pedagógico!BTree.hs}}
+\def\material#1{\href{http://wiki.di.uminho.pt/twiki/bin/view/Education/CP/MaterialPedagogico}{#1}\index{Cálculo de Programas!Material Pedagógico}}
+\def\cp#1{\href{http://wiki.di.uminho.pt/twiki/bin/view/Education/CP/WebHome}{#1}\index{Cálculo de Programas}}
+\def\MaterialPedagogico{\material{material pedagógico}}
+\def\haskellf#1{\texttt{#1}\index{Função!\texttt{#1}}}
+\def\fractal{\href{http://pt.wikipedia.org/wiki/Fractal}{fractal}\index{Fractal}}
+\def\sierp#1{\href{http://en.wikipedia.org/wiki/Sierpinski_triangle}{#1}\index{Fractal!Tri\^angulo de Sierpinski}}
+\def\psierp#1{\href{http://en.wikipedia.org/wiki/Sierpinski_triangle}{#1}\index{Fractal!Pirâmide de Sierpinski}}
+\def\hcata{cata\index{Combinador ``pointfree''!\emph{cata}}}
+\def\iso{\mathbin{\cong}\index{Relação de isomorfismo}}
+\def\kons#1{\underline{#1}\index{Combinador ``pointfree''!função constante}}
+\def\lhaskell#1{#1\index{Haskell!``Literate Haskell''}}
+\def\mutu#1#2{\mathopen{\lhd}#1 , #2\mathclose{\rhd}\index{Combinador ``pointfree''!\emph{mutu}}}
+\def\obrigatorio{${}^\dagger\ $\index{Exercícios obrigatórios}}
+\def\p#1{\pi_{#1}\index{Função!$\pi_#1$}}
+\def\sana#1{\mathopen{[\!(}#1\mathclose{)\!]}\index{Combinador ``pointfree''!\emph{ana}}}
+\def\spara#1{\mathopen{\langle\![}#1\mathclose{]\!\rangle}\index{Combinador ``pointfree''!\emph{para}}}
+\def\split#1#2{\mathopen{\langle}#1 , #2\mathclose{\rangle}\index{Combinador ``pointfree''!\emph{split}}} % <a,b,...z>
+\def\texcmd#1{\texttt{#1}\index{\LaTeX!macro!\texttt{#1}}}
+\def\trans#1{\overline{#1\rule{0pt}{.6em}}\index{Combinador ``pointfree''!transposição}}
+\def\uncurry #1{\widehat{#1}\index{Função!\emph{uncurry}}}
+\def\xypic#1{\textsc{#1}\index{\LaTeX!pacote!XY-pic}}
+%----------------- Extracted from jnobasics.sty -------------------------------%
+\long\def\pdfout#1{\relax}
+\def\mcond#1#2#3{#1 \rightarrow #2 , #3}
+\newenvironment{lcbr}{\left\{\begin{array}{l}}{\end{array}\right.}
+\newenvironment{calculation}{\begin{eqnarray*}&&}{\end{eqnarray*}}
+\def\eg{\emph{eg.}}
+\def\esimo#1{#1${.\kern-.1em}^{\super{o}}$}
+\def\esima#1{#1${.\kern-.1em}^{\super{a}}$}
+\def\super#1{\mbox{{\scriptsize #1}}}
+\def\traco{\noindent\mbox{}\hrulefill\mbox{} \\*}
+\def\law#1#2#3#4{%
+        \makebox[.25\textwidth][l]{\textbf{#2}}
+&&
+        \begin{array}{rcl}#4\end{array}
+        \label{eq:#1}
+%	\index{Lei!#2}
+}
+\def\comp{\mathbin{\cdot}}
+\def\implied{\mathbin\Leftarrow}
+\def\deff{\stackrel{\rm def}{=}}          % Function definition symbol
+\def\just#1#2{\\ &#1& \rule{2em}{0pt} \{ \mbox{\rule[-.7em]{0pt}{1.8em} \small #2 \/} \} \nonumber\\ && }
+\def\kcomp{\mathbin{\bullet}}
+%----------------- Importing/modifying isolatin1 ------------------------------%
+%\usepackage{isolatin1}
+%\catcode181=13  \def^^b5{\mu}				% 181, '265, "b5
+%\@ifundefined{lguill}{\def^^ab{``}}{\def^^ab{\lguill}}
+%\@ifundefined{rguill}{\def^^bb{''}}{\def^^bb{\rguill}}
+%\catcode186=13  \def^^ba{${\kern-.1em}^{\mbox{\scriptsize o}}$}      % 186, '272, "ba
+%\catcode183=13  \def^^b7{\comp}     % 183, '267, "b7
+%----------------- Exercise format --------------------------------------------%
+\newcounter{exercise}
+\def\theexercise{\arabic{exercise}}
+%
+\newenvironment{exercise}%
+{\refstepcounter{exercise}
+     \setlength{\parindent}{1em}
+%    \setlength{\parskip}{\baselineskip}
+%    \medskip
+     \noindent
+     {\bf Exercício~\theexercise.}
+\addcontentsline{loe}{subsection}{\numberline{}{{\rm \hskip-6em Exercise \arabic{exercise}}}}}%
+{~\\~\\ \traco \bigskip} %\hrule\bigskip}
+%----------------- WWW interfacing desabled -----------------------------------%
+\let\pisca=\relax
+\def\quoteId#1#2{\textsl{#1}}
+\def\quoteUrl#1#2{\texttt{#2}}
+\let\htmladdnormallink=\quoteId             % HTML links disabled by default
+%----------------- Shortcuts --------------------------------------------------%
+\def\Haskell{\haskell{Haskell}}
+\def\bb#1#2{{\fun B}(#1,#2)}
+\def\b{\fun B}
+\def\ff#1{\ap\f{#1}}
+\def\fff#1{\ap{\f^2}{#1}}
+\def\f{\fun F}
+\def\gg#1{\ap\g{#1}}
+\def\g{\fun G}
+\def\muF{\mu\fun F}
+\def\tf#1{\ap{\fun T}#1}
+%----------------- testing ----------------------------------------------------%
+\newtheorem{teste}{\underline{Testes unitários}}
+%----------------- fim ----- ----------------------------------------------------%
