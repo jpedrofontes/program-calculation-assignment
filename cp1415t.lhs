@@ -826,31 +826,39 @@ mgen = undefined
 \subsection*{Secção \ref{sec:sierp}}
 
 \begin{code}
-inTLTree = undefined 
+inTLTree = either L N 
 
-outTLTree = undefined
+outTLTree (L x)         = i1 (x)
+outTLTree (N (m,(e,d))) = i2 (m,(e,d))
 
-baseTLTree = undefined
+baseTLTree g f = g -|- (f >< (f >< f))
 
-recTLTree = undefined
+recTLTree f = id -|- (f >< (f >< f))
 
-cataTLTree = undefined
+cataTLTree g = g . (recTLTree (cataTLTree g)) . outTLTree
 
-anaTLTree f = undefined
+anaTLTree f = inTLTree . (recTLTree (anaTLTree f) ) . f
 
-hyloTLTree a c = undefined
+hyloTLTree a c = cataTLTree a . anaTLTree c
 
-tipsTLTree = undefined
+tipsTLTree = cataTLTree (either singl conc)
+        where conc(m,(l,r)) = l ++ m ++ r
 
-invTLTree = undefined
+invTLTree = cataTLTree (inTLTree . (id -|- id >< swap))
 
-depthTLTree = undefined
+depthTLTree = cataTLTree (either one (succ . uncurry max . (id >< uncurry max)))
 
 geraSierp :: Tri -> Int -> TLTree Tri
-geraSierp = undefined
+geraSierp t         0 = L t      
+geraSierp ((x,y),s) n =
+     let s' = div s 2
+     in  N ((geraSierp ((x,y), s') (n-1)),((geraSierp ((x+s',y), s') (n-1)),(geraSierp ((x,y+s'), s') (n-1))))
+
+apresentaSierp :: TLTree Tri -> [Tri]
+apresentaSierp = cataTLTree (either singl (uncurry (++) . (id >< uncurry (++))))
 
 countTLTree :: TLTree b -> Int
-countTLTree = undefined
+countTLTree = fromIntegral . (cataTLTree (either one (add . (id >< add))))
 
 draw = render html where
        html = rep dados
