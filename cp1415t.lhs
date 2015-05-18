@@ -849,10 +849,14 @@ invTLTree = cataTLTree (inTLTree . (id -|- id >< swap))
 depthTLTree = cataTLTree (either one (succ . uncurry max . (id >< uncurry max)))
 
 geraSierp :: Tri -> Int -> TLTree Tri
-geraSierp t         0 = L t      
-geraSierp ((x,y),s) n =
-     let s' = div s 2
-     in  N ((geraSierp ((x,y), s') (n-1)),((geraSierp ((x+s',y), s') (n-1)),(geraSierp ((x,y+s'), s') (n-1))))
+geraSierp t nr = sierp (t,nr)
+
+sierp = undefined
+
+--geraSierp t         0 = L t      
+--geraSierp ((x,y),s) n =
+--     let s' = div s 2
+--     in  N ((geraSierp ((x,y), s') (n-1)),((geraSierp ((x+s',y), s') (n-1)),(geraSierp ((x,y+s'), s') (n-1))))
 
 apresentaSierp :: TLTree Tri -> [Tri]
 apresentaSierp = cataTLTree (either singl (uncurry (++) . (id >< uncurry (++))))
@@ -863,7 +867,11 @@ countTLTree = fromIntegral . (cataTLTree (either one (add . (id >< add))))
 draw = render html where
        html = rep dados
 
-rep = undefined
+rep x = finalize (concat (map drawTriangle (apresentaSierp (gera x))))
+
+gera :: (Tri, Int) -> TLTree Tri
+gera (t,nr) = geraSierp t (fromIntegral nr)
+
 \end{code}
 \pdfout{%
 \begin{code}
@@ -885,7 +893,7 @@ parBTreeMap = undefined
 \end{code}
 e apresente aqui os resultados das suas experiências com essa função.
 
-%----------------- Fim do anexo cpm soluções propostas -------------------------%
+%----------------- Fim do anexo com soluções propostas -------------------------%
 
 %----------------- Índice remissivo (exige makeindex) -------------------------%
 
