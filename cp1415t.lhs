@@ -848,15 +848,24 @@ invTLTree = cataTLTree (inTLTree . (id -|- id >< swap))
 
 depthTLTree = cataTLTree (either one (succ . uncurry max . (id >< uncurry max)))
 
-geraSierp :: Tri -> Int -> TLTree Tri
-geraSierp t nr = sierp (t,nr)
-
-sierp = undefined
-
 --geraSierp t         0 = L t      
---geraSierp ((x,y),s) n =
---     let s' = div s 2
---     in  N ((geraSierp ((x,y), s') (n-1)),((geraSierp ((x+s',y), s') (n-1)),(geraSierp ((x,y+s'), s') (n-1))))
+--geraSierp ((x,y),s) n = 
+--      let s' = div s 2
+--      in  N ((geraSierp ((x,y), s') (n-1)),((geraSierp ((x+s',y), s') (n-1)),(geraSierp ((x,y+s'), s') (n-1))))
+
+geraSierp :: Tri -> Int -> TLTree Tri
+geraSierp = curry sierp
+
+sierp :: (Tri, Int) -> TLTree Tri
+sierp = 
+  let s' = s . p2 . p1
+  in 
+    anaTLTree (
+      cond ((==0) . p2) 
+      (i1 . p1) 
+      (i2 . ((((id >< id) >< s) >< pred) >< (((((s'+) >< id) >< s) >< pred ) >< (((id >< (s'+)) >< s) >< pred)))))
+          where
+            s x = div x 2
 
 apresentaSierp :: TLTree Tri -> [Tri]
 apresentaSierp = cataTLTree (either singl (uncurry (++) . (id >< uncurry (++))))
