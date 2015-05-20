@@ -562,7 +562,7 @@ ser perfeita?
 
 Responda a todas estas perguntas encontrando |g| tal que
 \begin{code}
---transmitir = pcataList gene
+transmitir = pcataList gene
 \end{code}
 descreve o comportamento do aparelho.
 %
@@ -892,10 +892,8 @@ Defina
 \begin{code}
 gene = either pempty pcat 
         where
-          pempty = return
-          pcat (a,b)
-            | a == "stop" = D[((a:b), 0.9), (b, 0.1)]
-            | otherwise = D[((a:b), 0.95), (b, 0.05)]
+          pempty = return (D[(["stop"], 0.9), ([], 0.1)])
+          pcat (a,b) = D[((a:b), 0.95), (b, 0.05)]
 
 \end{code}
 e responda ao problema do enunciado aqui.
