@@ -562,7 +562,7 @@ ser perfeita?
 
 Responda a todas estas perguntas encontrando |g| tal que
 \begin{code}
-transmitir = pcataList gene
+--transmitir = pcataList gene
 \end{code}
 descreve o comportamento do aparelho.
 %
@@ -848,24 +848,24 @@ invTLTree = cataTLTree (inTLTree . (id -|- id >< swap))
 
 depthTLTree = cataTLTree (either one (succ . uncurry max . (id >< uncurry max)))
 
---geraSierp t         0 = L t      
---geraSierp ((x,y),s) n = 
---      let s' = div s 2
---      in  N ((geraSierp ((x,y), s') (n-1)),((geraSierp ((x+s',y), s') (n-1)),(geraSierp ((x,y+s'), s') (n-1))))
+geraSierp t         0 = L t      
+geraSierp ((x,y),s) n = 
+      let s' = div s 2
+      in  N ((geraSierp ((x,y), s') (n-1)),((geraSierp ((x+s',y), s') (n-1)),(geraSierp ((x,y+s'), s') (n-1))))
 
 geraSierp :: Tri -> Int -> TLTree Tri
-geraSierp = curry sierp
+--geraSierp = curry sierp
 
 sierp :: (Tri, Int) -> TLTree Tri
-sierp = 
-  let s' = s . p2 . p1
+sierp = undefined
+ {- let s' = s . p2 . p1
   in 
     anaTLTree (
       cond ((==0) . p2) 
       (i1 . p1) 
       (i2 . ((((id >< id) >< s) >< pred) >< (((((s'+) >< id) >< s) >< pred ) >< (((id >< (s'+)) >< s) >< pred)))))
           where
-            s x = div x 2
+            s x = div x 2-}
 
 apresentaSierp :: TLTree Tri -> [Tri]
 apresentaSierp = cataTLTree (either singl (uncurry (++) . (id >< uncurry (++))))
@@ -876,9 +876,8 @@ countTLTree = fromIntegral . (cataTLTree (either one (add . (id >< add))))
 draw = render html where
        html = rep dados
 
-rep x = finalize (concat (map drawTriangle (apresentaSierp (gera x))))
+rep = finalize . concat . (map drawTriangle) . apresentaSierp . gera
 
-gera :: (Tri, Int) -> TLTree Tri
 gera (t,nr) = geraSierp t (fromIntegral nr)
 
 \end{code}
@@ -891,7 +890,13 @@ data TLTree a = L a | N (TLTree a,(TLTree a,TLTree a)) deriving (Eq,Show)
 \subsection*{Secção \ref{sec:monads}}
 Defina
 \begin{code}
-gene = undefined
+gene = either pempty pcat 
+        where
+          pempty = return
+          pcat (a,b)
+            | a == "stop" = D[((a:b), 0.9), (b, 0.1)]
+            | otherwise = D[((a:b), 0.95), (b, 0.05)]
+
 \end{code}
 e responda ao problema do enunciado aqui.
 
