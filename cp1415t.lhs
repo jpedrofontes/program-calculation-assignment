@@ -892,7 +892,7 @@ Defina
 \begin{code}
 gene = either pempty pcat 
         where
-          pempty = return (D[(["stop"], 0.9), ([], 0.1)])
+          pempty     = return (D[(["stop"], 0.9), ([], 0.1)])
           pcat (a,b) = D[((a:b), 0.95), (b, 0.05)]
 \end{code}
 e responda ao problema do enunciado aqui.
@@ -901,8 +901,9 @@ e responda ao problema do enunciado aqui.
 Defina
 \begin{code}
 parBTreeMap f (Empty)              = return Empty
-parBTreeMap f (Node (a,(esq,dir))) = do
-    a' <- rpar(f a)
+parBTreeMap f (Node (a,(esq,dir))) = 
+  do
+    a'   <- rpar(f a)
     esq' <- parBTreeMap f esq
     dir' <- parBTreeMap f dir
     return (Node (a',(esq',dir')))
