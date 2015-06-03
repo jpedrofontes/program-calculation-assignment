@@ -1,31 +1,51 @@
 \documentclass[a4paper]{article}
-\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage[a4paper,i1=3cm,i2=2cm,top=2.5cm,bottom=2.5cm]{geometry}
 \usepackage{palatino}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
 \usepackage{graphicx}
 %include polycode.fmt
 %include cp1415t.sty
 
-\title{
-		    Cálculo de Programas
-\\
-		Trabalho Prático
-\\
-		LCC+LEI --- Ano Lectivo de 2014/15
-}
 
-\author{
-		\dium
-\\
-		Universidade do Minho
-}
-
-
-\date\mydate
-
-\makeindex
 
 \begin{document}
+
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\center
+
+\textsc{\LARGE Universidade do Minho}\\[1.5cm]
+\textsc{\Large Cálculo de Programas}\\[0.5cm]
+\textsc{\large 2º Ano - 2º Semestre}\\[0.5cm]
+
+\HRule \\[0.4cm]
+{ \huge \bfseries Trabalho Prático}\\[0.4cm]
+\HRule \\[1.5cm]
+
+\begin{minipage}{0.6\textwidth}
+\begin{center} \large
+        Grupo 33\\
+        Bruno Renato Fernandes Carvalho - a67847 \\
+        João Pedro Pereira Fontes - a71184 \\
+        Pedro Vieira Fortes - a64309 \\
+        \vspace{-50mm}
+\end{center}
+\end{minipage}
+
+\begin{minipage}[b]{\textwidth}
+    \centering
+    \large   
+    Braga, 31 de Maio de 2015
+    \vspace{-120mm} 
+\end{minipage}
+
+\vfill
+
+\end{titlepage}
+
+\makeindex
 
 \maketitle
 
@@ -209,7 +229,7 @@ Faça os testes seguintes:
 test03a = qsplit (4,30) == i2(17,((4,16),(18,30)))
 test03b = qsplit (4,3) == i1()
 test03c = qsplit (0,0) == i1()
-test03d = qsplit (1,1) == Right (1,((1,0),(2,1)))
+test03d = qsplit (1,1) == i2 (1,((1,0),(2,1)))
 test03e = balBTree t1 == True
 test03f = inordt t1 == [20..30]
 \end{code}
@@ -689,8 +709,8 @@ main = getArgs >>= cond (not . null) exemp_or_exer errInvArgs
         execExemp = cond isPar execExempPar execExempSeq
         exer = cond (((==) 3) . length) execExer errInvArgs
         execExer = cond isPar execExerPar execExerSeq
-        execExempSeq = const (putStrLn . show . (map fib) $ [20..30])      
-        execExempPar = const (putStrLn . show . runEval . (parmap fib) $ [20..30])
+        execExempSeq = const (putStrLn . show . (fmap fib) $ t1)      
+        execExempPar = const (putStrLn . show . runEval . (parBTreeMap fib) $ t1)
 \end{code}
 
 \section{Bibliotecas e código auxiliar}
@@ -790,37 +810,44 @@ outras funções auxiliares que sejam necessárias.
 \subsection*{Secção \ref{sec:LTree}}
 \begin{code}
 depth :: LTree a -> Integer
-depth = undefined
+depth = cataLTree (either (zero) (succ . uncurry max))
 
 balance :: LTree a -> LTree a
-balance = undefined
+balance = (anaLTree lsplit) . tips
 \end{code}
 
 \subsection*{Secção \ref{sec:BTree}}
 \begin{code}
 qsplit :: Integral a => (a, a) -> Either () (a, ((a, a), (a, a)))
-qsplit = undefined
+qsplit (x,y) 
+        | (x>y)             = i1 ()
+        | (x==0) && (y==0)  = i1 ()
+        | otherwise         = i2 (div (x+y) 2 , ((x, (div (x+y) 2) - 1), ((div (x+y) 2) + 1, y)))
 \end{code}
 
 \subsection*{Secção \ref{sec:SList}}
 \begin{code}
 inSList :: Either a (a1, SList a1 a) -> SList a1 a
-inSList = undefined
+inSList = either Sent Cons
 
 outSList :: SList b a -> Either a (b, SList b a)
-outSList = undefined
+outSList (Sent b)     = i1 (b)
+outSList (Cons (a,t)) = i2 (a,t)
 
 anaSList :: (c -> Either a (b, c)) -> c -> SList b a
-anaSList = undefined
+anaSList f = inSList . recList (anaSList f) . f
 
 cataSList :: (Either b (a, d) -> d) -> SList a b -> d
-cataSList = undefined
+cataSList g = g . (recList (cataSList g)) . outSList
 
 hyloSList :: (Either b (d, c) -> c) -> (a -> Either b (d, a)) -> a -> c
-hyloSList = undefined
+hyloSList c a = cataSList c . anaSList a
 
 mgen :: Ord a => ([a], [a]) -> Either [a] (a, ([a], [a]))
-mgen = undefined
+mgen (l, [])     = i1 (l)
+mgen ([], l)     = i1 (l)
+mgen ((x:xs), l) = i2 ((x,(xs,l)))
+
 \end{code}
 
 \subsection*{Secção \ref{sec:sierp}}
@@ -829,7 +856,7 @@ mgen = undefined
 inTLTree = either L N 
 
 outTLTree (L x)         = i1 (x)
-outTLTree (N (m,(e,d))) = i2 (m,(e,d))
+outTLTree (N (l,(m,r))) = i2 (l,(m,r))
 
 baseTLTree g f = g -|- (f >< (f >< f))
 
@@ -839,33 +866,28 @@ cataTLTree g = g . (recTLTree (cataTLTree g)) . outTLTree
 
 anaTLTree f = inTLTree . (recTLTree (anaTLTree f) ) . f
 
-hyloTLTree a c = cataTLTree a . anaTLTree c
+hyloTLTree c a = cataTLTree c . anaTLTree a
 
 tipsTLTree = cataTLTree (either singl conc)
-        where conc(m,(l,r)) = l ++ m ++ r
+        where conc(l,(m,r)) = l ++ m ++ r
 
-invTLTree = cataTLTree (inTLTree . (id -|- id >< swap))
+invTLTree = cataTLTree (inTLTree . (id -|- swap3))
+        where swap3 (l,(m,r)) = (r,(m,l))
 
 depthTLTree = cataTLTree (either one (succ . uncurry max . (id >< uncurry max)))
 
-geraSierp t         0 = L t      
-geraSierp ((x,y),s) n = 
-      let s' = div s 2
-      in  N ((geraSierp ((x,y), s') (n-1)),((geraSierp ((x+s',y), s') (n-1)),(geraSierp ((x,y+s'), s') (n-1))))
-
 geraSierp :: Tri -> Int -> TLTree Tri
---geraSierp = curry sierp
+geraSierp = curry (anaTLTree gera3)
 
-sierp :: (Tri, Int) -> TLTree Tri
-sierp = undefined
- {- let s' = s . p2 . p1
-  in 
-    anaTLTree (
-      cond ((==0) . p2) 
-      (i1 . p1) 
-      (i2 . ((((id >< id) >< s) >< pred) >< (((((s'+) >< id) >< s) >< pred ) >< (((id >< (s'+)) >< s) >< pred)))))
-          where
-            s x = div x 2-}
+gera3 :: (Tri,Int) -> Either Tri ((Tri,Int),((Tri,Int),(Tri,Int)))
+gera3 (t,0)         = i1 (t)
+gera3 (((x,y),s),n) = i2 ((((x,y), s'), n-1),((tx, n-1),(ty, n-1)))
+        where
+          s' = div s 2
+          x' = x+s'
+          y' = y+s'
+          tx = ((x', y), s') :: Tri
+          ty = ((x, y'), s') :: Tri
 
 apresentaSierp :: TLTree Tri -> [Tri]
 apresentaSierp = cataTLTree (either singl (uncurry (++) . (id >< uncurry (++))))
@@ -896,6 +918,36 @@ gene = either pempty pcat
           pcat (a,b) = D[((a:b), 0.95), (b, 0.05)]
 \end{code}
 e responda ao problema do enunciado aqui.
+\\
+\\
+Sendo o output da execução de \emph{``transmitir (words ``Vamos atacar hoje'')''} o seguinte:
+\begin{verbatim}
+ 
+["Vamos","atacar","hoje","stop"]  77.2%
+       ["Vamos","atacar","hoje"]   8.6%
+        ["atacar","hoje","stop"]   4.1%
+       ["Vamos","atacar","stop"]   4.1%
+         ["Vamos","hoje","stop"]   4.1%
+              ["Vamos","atacar"]   0.5%
+                ["Vamos","hoje"]   0.5%
+               ["atacar","hoje"]   0.5%
+                ["Vamos","stop"]   0.2%
+               ["atacar","stop"]   0.2%
+                 ["hoje","stop"]   0.2%
+                      ["atacar"]   0.0%
+                       ["Vamos"]   0.0%
+                        ["hoje"]   0.0%
+                        ["stop"]   0.0%
+                              []   0.0%
+
+\end{verbatim}
+Concluímos as seguintes respostas:
+\begin{verbatim}
+
+"Vamos hoje stop"         -> 4,1%
+"Vamos atacar hoje"       -> 8,6%
+"Vamos atacar hoje stop"  -> 77,2%
+\end{verbatim}
 
 \subsection*{Secção \ref{sec:parBTreeMap}}
 Defina
@@ -909,6 +961,19 @@ parBTreeMap f (Node (a,(esq,dir))) =
     return (Node (a',(esq',dir')))
 \end{code}
 e apresente aqui os resultados das suas experiências com essa função.
+\\
+\\
+Os testes foram executados numa máquina com 2 cores\footnote{Intel Core i5 a 2.6 GHz.}
+\begin{verbatim}
+ 
+Versão Sequencial
+  Total   time    1.01s  (  0.80s elapsed)
+
+Versão Paralela
+  Total   time    0.69s  (  0.40s elapsed)
+
+
+\end{verbatim}
 
 %----------------- Fim do anexo com soluções propostas -------------------------%
 
